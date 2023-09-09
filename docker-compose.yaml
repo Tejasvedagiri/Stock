@@ -49,6 +49,7 @@ services:
       KAFKA_CLIENT_PASSWORDS: ${KAFKA_CLIENT_PASSWORDS}
       KAFKA_HOST: ${KAFKA_HOST}
       KAFKA_PORT: 9092
+      DEBUG_MODE: ${DEBUG_MODE}
     depends_on:
       - ${KAFKA_HOST}
       - eror_stock_api
@@ -72,13 +73,14 @@ services:
     container_name: eror_stock_api
     restart: always
     ports:
-      - 80:80
+      - 8080:8080
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_HOSTNAME: ${MYSQL_HOSTNAME}
       MYSQL_PORT: ${MYSQL_PORT}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
+      DEBUG_MODE: ${DEBUG_MODE}
     depends_on:
       - eror_stock_mysql
   # ui:
