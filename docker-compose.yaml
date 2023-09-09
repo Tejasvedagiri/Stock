@@ -51,6 +51,7 @@ services:
       KAFKA_PORT: 9092
     depends_on:
       - ${KAFKA_HOST}
+      - eror_stock_api
   eror_stock_mysql:
     container_name: eror_stock_mysql
     image: mysql:latest
@@ -63,24 +64,23 @@ services:
       MYSQL_PORT: ${MYSQL_PORT}
     command: --default-authentication-plugin=mysql_native_password
     
-  # api:
-  #   # image: ghcr.io/tejasvedagiri/stockapi:latest
-  #   build:
-  #     context: ../ErorStockAPIServices/  
-  #     dockerfile: Dockerfile  
-  #   container_name: Eror_Stock_API
-  #   restart: always
-  #   ports:
-  #     - 81:80
-  #   environment:
-  #     DB_USERNAME: ${MYSQL_USER}
-  #     DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-  #     DB_HOSTNAME: ${MYSQL_HOSTNAME}
-  #     DB_PORT: ${MYSQL_PORT}
-  #     DB_DATABASE: ${MYSQL_DATABASE}
-  #     API_USERNAME: ${API_USERNAME}
-  #     API_PASSWORD: ${API_PASSWORD}
-  #     DB_TYPE: ${DB_TYPE}
+  eror_stock_api:
+    # image: ghcr.io/tejasvedagiri/stockapi:latest
+    build:
+      context: ./ErorStockAPIServices/  
+      dockerfile: Dockerfile  
+    container_name: eror_stock_api
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOSTNAME: ${MYSQL_HOSTNAME}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    depends_on:
+      - eror_stock_mysql
   # ui:
   #   image: ghcr.io/tejasvedagiri/stockui:latest
   #   # build:
