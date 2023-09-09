@@ -83,15 +83,18 @@ services:
       DEBUG_MODE: ${DEBUG_MODE}
     depends_on:
       - eror_stock_mysql
-  # ui:
-  #   image: ghcr.io/tejasvedagiri/stockui:latest
-  #   # build:
-  #   #   context: ../StockUI/  
-  #   #   dockerfile: Dockerfile  
-  #   container_name: Eror_Stock_UI
-  #   restart: always
-  #   ports:
-  #     - 80:80
-  #   environment:
-  #     REACT_APP_API_ENDPOINT: ${REACT_APP_API_ENDPOINT}
+  ui:
+    # image: ghcr.io/tejasvedagiri/stockui:latest
+    build:
+      context: ./ErorStockUI/  
+      dockerfile: Dockerfile  
+    container_name: eror_stock_ui
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      REACT_APP_API_ENDPOINT: ${REACT_APP_API_ENDPOINT}
+    depends_on:
+      - eror_stock_api
+
 
