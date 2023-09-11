@@ -88,7 +88,7 @@ services:
       FRONTEND_URL: ${FRONTEND_URL}
     depends_on:
       - eror_stock_mysql
-  ui:
+  eror_stock_ui:
     # image: ghcr.io/tejasvedagiri/stockui:latest
     build:
       context: ./ErorStockUI/  
@@ -101,5 +101,14 @@ services:
       REACT_APP_API_ENDPOINT: ${REACT_APP_API_ENDPOINT}
     depends_on:
       - eror_stock_api
+  eror_stock_cron:
+    build:
+      context: ./ErorStockCRON/  
+      dockerfile: Dockerfile  
+    container_name: eror_stock_cron
+    restart: always
+    depends_on:
+      - ${KAFKA_HOST}
+
 
 
