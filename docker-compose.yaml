@@ -16,16 +16,32 @@ services:
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@eror_stock_kafka:9093
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+  eror_stock_mysql:
+    image: mysql:latest
+    container_name: ${EROR_STOCK_MYSQL}
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_PORT: ${MYSQL_PORT}
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+            test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+            timeout: 20s
+            retries: 10
   eror_stock_create_topic:
     image: docker.io/bitnami/kafka:3.5
     depends_on:
       - ${EROR_STOCK_KAFKA}
     entrypoint: /opt/bitnami/kafka/bin/kafka-topics.sh --create --bootstrap-server ${KAFKA_HOST}:9092 --replication-factor 1 --partitions 1 --topic stock
   eror_stock_producer:
+    image: ghcr.io/tejasvedagiri/erorstockproducer:latest
+    # build:
+    #   context: ./ErorStockProducer/  
+    #   dockerfile: Dockerfile 
     container_name: ${EROR_STOCK_PRODUCER}
-    build:
-      context: ./ErorStockProducer/  
-      dockerfile: Dockerfile  
     environment:
       KAFKA_CLIENT_USERS: ${KAFKA_CLIENT_USERS}
       KAFKA_CLIENT_PASSWORDS: ${KAFKA_CLIENT_PASSWORDS}
@@ -36,10 +52,11 @@ services:
     # ports:
     #   - 9980:80
   eror_stock_harvester:
+    image: ghcr.io/tejasvedagiri/erorstockharvester:latest
+    # build:
+    #   context: ./ErorStockHarvester/  
+    #   dockerfile: Dockerfile  
     container_name: eror_stock_harvester
-    build:
-      context: ./ErorStockHarvester/  
-      dockerfile: Dockerfile  
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -54,26 +71,11 @@ services:
       - ${EROR_STOCK_KAFKA}
       - ${EROR_STOCK_API}
       - ${EROR_STOCK_MYSQL}
-  eror_stock_mysql:
-    container_name: ${EROR_STOCK_MYSQL}
-    image: mysql:latest
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_PORT: ${MYSQL_PORT}
-    command: --default-authentication-plugin=mysql_native_password
-    healthcheck:
-            test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-            timeout: 20s
-            retries: 10
   eror_stock_api:
-    # image: ghcr.io/tejasvedagiri/stockapi:latest
-    build:
-      context: ./ErorStockAPIServices/  
-      dockerfile: Dockerfile  
+    image: ghcr.io/tejasvedagiri/erorstockapiservices:latest
+    # build:
+    #   context: ./ErorStockAPIServices/  
+    #   dockerfile: Dockerfile  
     container_name: ${EROR_STOCK_API}
     restart: always
     ports:
@@ -93,10 +95,10 @@ services:
       GOOGLE_CLIENT_SCERET: ${GOOGLE_CLIENT_SCERET}
       FRONTEND_URL: ${FRONTEND_URL}
   eror_stock_ui:
-    # image: ghcr.io/tejasvedagiri/stockui:latest
-    build:
-      context: ./ErorStockUI/  
-      dockerfile: Dockerfile  
+    image: ghcr.io/tejasvedagiri/erorstockui:latest
+    # build:
+    #   context: ./ErorStockUI/  
+    #   dockerfile: Dockerfile  
     container_name: ${EROR_STOCK_UI}
     restart: always
     ports:
@@ -106,20 +108,20 @@ services:
     depends_on:
       - ${EROR_STOCK_API}
   eror_stock_cron:
-    # image: ghcr.io/tejasvedagiri/stockui:latest
-    build:
-      context: ./ErorStockCRON/  
-      dockerfile: Dockerfile  
+    image: ghcr.io/tejasvedagiri/erorstockcron:latest
+    # build:
+    #   context: ./ErorStockCRON/  
+    #   dockerfile: Dockerfile  
     container_name: ${EROR_STOCK_CRON}
     restart: always
     depends_on:
       - ${EROR_STOCK_KAFKA}
       - ${EROR_STOCK_PRODUCER}
   eror_stock_homepage:
-    # image: ghcr.io/tejasvedagiri/erorhomepage:latest
-    build:
-      context: ./ErorHomepage/  
-      dockerfile: Dockerfile  
+    image: ghcr.io/tejasvedagiri/erorhomepage:latest
+    # build:
+    #   context: ./ErorHomepage/  
+    #   dockerfile: Dockerfile  
     container_name: eror_stock_homepage
     restart: always
     ports:
