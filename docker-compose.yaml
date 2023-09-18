@@ -22,7 +22,7 @@ services:
       - ${EROR_STOCK_KAFKA}
     entrypoint: /opt/bitnami/kafka/bin/kafka-topics.sh --create --bootstrap-server ${KAFKA_HOST}:9092 --replication-factor 1 --partitions 1 --topic stock
   eror_stock_producer:
-    container_name: eror_stock_producer
+    container_name: ${EROR_STOCK_PRODUCER}
     build:
       context: ./ErorStockProducer/  
       dockerfile: Dockerfile  
@@ -33,8 +33,8 @@ services:
       KAFKA_PORT: 9092
     depends_on:
       - ${EROR_STOCK_KAFKA}
-    ports:
-      - 9980:80
+    # ports:
+    #   - 9980:80
   eror_stock_harvester:
     container_name: eror_stock_harvester
     build:
@@ -70,14 +70,14 @@ services:
             timeout: 20s
             retries: 10
   eror_stock_api:
-    image: ghcr.io/tejasvedagiri/stockapi:latest
-    # build:
-    #   context: ./ErorStockAPIServices/  
-    #   dockerfile: Dockerfile  
+    # image: ghcr.io/tejasvedagiri/stockapi:latest
+    build:
+      context: ./ErorStockAPIServices/  
+      dockerfile: Dockerfile  
     container_name: ${EROR_STOCK_API}
     restart: always
-    # ports:
-    #   - 8080:8080
+    ports:
+      - 9012:8080
     depends_on:
       - ${EROR_STOCK_MYSQL}
     environment:
@@ -92,48 +92,35 @@ services:
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SCERET: ${GOOGLE_CLIENT_SCERET}
       FRONTEND_URL: ${FRONTEND_URL}
-    depends_on:
-      - eror_stock_mysql
   eror_stock_ui:
-    image: ghcr.io/tejasvedagiri/stockui:latest
-    # build:
-    #   context: ./ErorStockUI/  
-    #   dockerfile: Dockerfile  
-    container_name: ${eror_stock_ui}
+    # image: ghcr.io/tejasvedagiri/stockui:latest
+    build:
+      context: ./ErorStockUI/  
+      dockerfile: Dockerfile  
+    container_name: ${EROR_STOCK_UI}
     restart: always
     ports:
-      - 9000:80
+      - 9011:80
     environment:
       REACT_APP_API_ENDPOINT: ${REACT_APP_API_ENDPOINT}
     depends_on:
       - ${EROR_STOCK_API}
   eror_stock_cron:
-    image: ghcr.io/tejasvedagiri/stockui:latest
-    # build:
-    #   context: ./ErorStockCRON/  
-    #   dockerfile: Dockerfile  
-    container_name: ${eror_stock_cron}
+    # image: ghcr.io/tejasvedagiri/stockui:latest
+    build:
+      context: ./ErorStockCRON/  
+      dockerfile: Dockerfile  
+    container_name: ${EROR_STOCK_CRON}
     restart: always
     depends_on:
       - ${EROR_STOCK_KAFKA}
       - ${EROR_STOCK_PRODUCER}
   eror_stock_homepage:
-    image: docker pull ghcr.io/tejasvedagiri/homepage/homepage:latest
+    # image: ghcr.io/tejasvedagiri/erorhomepage:latest
+    build:
+      context: ./ErorHomepage/  
+      dockerfile: Dockerfile  
     container_name: eror_stock_homepage
     restart: always
     ports:
-      3000:80
-  eror_stock_proxy:
-    build:
-      context: ./ErorStockProxy/
-      restart: always
-      container_name: ${EROR_STOCK_PROXY}
-      depends_on:
-        - ${EROR_STOCK_KAFKA}
-        - ${EROR_STOCK_PRODUCER}
-        - ${EROR_STOCK_HARVESTER}
-        - ${EROR_STOCK_MYSQL}
-        - ${EROR_STOCK_API}
-        - ${EROR_STOCK_UI}
-        - ${EROR_STOCK_CRON}
-        - ${EROR_STOCK_HOMEPAGE}
+      - 9010:3000
