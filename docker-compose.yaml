@@ -49,8 +49,8 @@ services:
       KAFKA_PORT: 9092
     depends_on:
       - ${EROR_STOCK_KAFKA}
-    # ports:
-    #   - 9980:80
+    ports:
+      - 9980:80
   eror_stock_harvester:
     image: ghcr.io/tejasvedagiri/erorstockharvester:latest
     # build:
