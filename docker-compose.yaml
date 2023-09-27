@@ -35,7 +35,7 @@ services:
     image: docker.io/bitnami/kafka:3.5
     depends_on:
       - ${EROR_STOCK_KAFKA}
-    entrypoint: /opt/bitnami/kafka/bin/kafka-topics.sh --create --bootstrap-server ${KAFKA_HOST}:9092 --replication-factor 1 --partitions 1 --topic stock
+    entrypoint: /opt/bitnami/kafka/bin/kafka-topics.sh --create --bootstrap-server ${KAFKA_HOST}:${KAFKA_PORT} --replication-factor 1 --partitions 1 --topic stock
   eror_stock_producer:
     image: ghcr.io/tejasvedagiri/erorstockproducer:latest
     # build:
@@ -46,7 +46,11 @@ services:
       KAFKA_CLIENT_USERS: ${KAFKA_CLIENT_USERS}
       KAFKA_CLIENT_PASSWORDS: ${KAFKA_CLIENT_PASSWORDS}
       KAFKA_HOST: ${KAFKA_HOST}
-      KAFKA_PORT: 9092
+      KAFKA_PORT: ${KAFKA_PORT}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_PORT: ${MYSQL_PORT}
     depends_on:
       - ${EROR_STOCK_KAFKA}
     ports:
