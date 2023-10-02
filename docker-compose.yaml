@@ -16,6 +16,11 @@ services:
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@eror_stock_kafka:9093
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    deploy:
+      resources:
+        limits:
+          cpus: 0.01
+          memory: 50M
   eror_stock_mysql:
     image: mysql:latest
     container_name: ${EROR_STOCK_MYSQL}
@@ -31,10 +36,20 @@ services:
             test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
             timeout: 20s
             retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: 0.01
+          memory: 50M
   eror_stock_create_topic:
     image: docker.io/bitnami/kafka:3.5
     depends_on:
       - ${EROR_STOCK_KAFKA}
+    deploy:
+      resources:
+        limits:
+          cpus: 0.01
+          memory: 50M
     entrypoint: /opt/bitnami/kafka/bin/kafka-topics.sh --create --bootstrap-server ${KAFKA_HOST}:${KAFKA_PORT} --replication-factor 1 --partitions 1 --topic stock
   eror_stock_producer:
     image: ghcr.io/tejasvedagiri/erorstockproducer:latest
@@ -52,11 +67,15 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_PORT: ${MYSQL_PORT}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
     depends_on:
       - ${EROR_STOCK_KAFKA}
     ports:
       - 9980:80
+    deploy:
+      resources:
+        limits:
+          cpus: 0.01
+          memory: 50M
   eror_stock_harvester:
     image: ghcr.io/tejasvedagiri/erorstockharvester:latest
     # build:
@@ -77,6 +96,11 @@ services:
       - ${EROR_STOCK_KAFKA}
       - ${EROR_STOCK_API}
       - ${EROR_STOCK_MYSQL}
+    deploy:
+      resources:
+        limits:
+          cpus: 0.01
+          memory: 50M
   eror_stock_api:
     image: ghcr.io/tejasvedagiri/erorstockapiservices:latest
     # build:
@@ -100,6 +124,11 @@ services:
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SCERET: ${GOOGLE_CLIENT_SCERET}
       FRONTEND_URL: ${FRONTEND_URL}
+    deploy:
+      resources:
+        limits:
+          cpus: 0.01
+          memory: 50M
   eror_stock_ui:
     image: ghcr.io/tejasvedagiri/erorstockui:latest
     # build:
@@ -113,6 +142,11 @@ services:
       REACT_APP_API_ENDPOINT: ${REACT_APP_API_ENDPOINT}
     depends_on:
       - ${EROR_STOCK_API}
+    deploy:
+      resources:
+        limits:
+          cpus: 0.01
+          memory: 50M
   eror_stock_cron:
     image: ghcr.io/tejasvedagiri/erorstockcron:latest
     # build:
@@ -123,6 +157,11 @@ services:
     depends_on:
       - ${EROR_STOCK_KAFKA}
       - ${EROR_STOCK_PRODUCER}
+    deploy:
+      resources:
+        limits:
+          cpus: 0.01
+          memory: 50M
   eror_stock_homepage:
     image: ghcr.io/tejasvedagiri/erorhomepage:latest
     # build:
@@ -132,3 +171,8 @@ services:
     restart: always
     ports:
       - 9010:3000
+    deploy:
+      resources:
+        limits:
+          cpus: 0.01
+          memory: 50M
