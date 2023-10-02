@@ -8,19 +8,19 @@ services:
     # volumes:
     #   - "/docker/data/erorstock/kafka_data:/bitnami"
     environment:
-      - KAFKA_CFG_NODE_ID=0
-      - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://eror_stock_kafka:9092 
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@eror_stock_kafka:9093
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    - KAFKA_CFG_NODE_ID=0
+    - KAFKA_CFG_PROCESS_ROLES=controller,broker
+    - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+    - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://eror_stock_kafka:9092
+    - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+    - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@eror_stock_kafka:9093
+    - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+    - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
     deploy:
       resources:
         limits:
           cpus: 0.01
-          memory: 50M
+          memory: 256M
   eror_stock_mysql:
     image: mysql:latest
     container_name: ${EROR_STOCK_MYSQL}
@@ -33,18 +33,18 @@ services:
       MYSQL_PORT: ${MYSQL_PORT}
     command: --default-authentication-plugin=mysql_native_password
     healthcheck:
-            test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-            timeout: 20s
-            retries: 10
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
     deploy:
       resources:
         limits:
           cpus: 0.01
-          memory: 50M
+          memory: 256M
   eror_stock_create_topic:
     image: docker.io/bitnami/kafka:3.5
     depends_on:
-      - ${EROR_STOCK_KAFKA}
+    - ${EROR_STOCK_KAFKA}
     deploy:
       resources:
         limits:
@@ -68,14 +68,14 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_PORT: ${MYSQL_PORT}
     depends_on:
-      - ${EROR_STOCK_KAFKA}
+    - ${EROR_STOCK_KAFKA}
     ports:
-      - 9980:80
+    - 9980:80
     deploy:
       resources:
         limits:
           cpus: 0.01
-          memory: 50M
+          memory: 256M
   eror_stock_harvester:
     image: ghcr.io/tejasvedagiri/erorstockharvester:latest
     # build:
@@ -93,14 +93,14 @@ services:
       KAFKA_PORT: 9092
       DEBUG_MODE: ${DEBUG_MODE}
     depends_on:
-      - ${EROR_STOCK_KAFKA}
-      - ${EROR_STOCK_API}
-      - ${EROR_STOCK_MYSQL}
+    - ${EROR_STOCK_KAFKA}
+    - ${EROR_STOCK_API}
+    - ${EROR_STOCK_MYSQL}
     deploy:
       resources:
         limits:
           cpus: 0.01
-          memory: 50M
+          memory: 256M
   eror_stock_api:
     image: ghcr.io/tejasvedagiri/erorstockapiservices:latest
     # build:
@@ -109,9 +109,9 @@ services:
     container_name: ${EROR_STOCK_API}
     restart: always
     ports:
-      - 9012:8080
+    - 9012:8080
     depends_on:
-      - ${EROR_STOCK_MYSQL}
+    - ${EROR_STOCK_MYSQL}
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -119,7 +119,7 @@ services:
       MYSQL_PORT: ${MYSQL_PORT}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       DEBUG_MODE: ${DEBUG_MODE}
-      GITHUB_CLIENT_ID : ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SCERET: ${GOOGLE_CLIENT_SCERET}
@@ -137,11 +137,11 @@ services:
     container_name: ${EROR_STOCK_UI}
     restart: always
     ports:
-      - 9011:80
+    - 9011:80
     environment:
       REACT_APP_API_ENDPOINT: ${REACT_APP_API_ENDPOINT}
     depends_on:
-      - ${EROR_STOCK_API}
+    - ${EROR_STOCK_API}
     deploy:
       resources:
         limits:
@@ -155,8 +155,8 @@ services:
     container_name: ${EROR_STOCK_CRON}
     restart: always
     depends_on:
-      - ${EROR_STOCK_KAFKA}
-      - ${EROR_STOCK_PRODUCER}
+    - ${EROR_STOCK_KAFKA}
+    - ${EROR_STOCK_PRODUCER}
     deploy:
       resources:
         limits:
@@ -170,7 +170,7 @@ services:
     container_name: eror_stock_homepage
     restart: always
     ports:
-      - 9010:3000
+    - 9010:3000
     deploy:
       resources:
         limits:
