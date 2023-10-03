@@ -19,7 +19,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.01
+          cpus: 0.75
           memory: 256M
   eror_stock_mysql:
     image: mysql:latest
@@ -39,8 +39,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.01
-          memory: 256M
+          cpus: 0.75
+          memory: 512M
   eror_stock_create_topic:
     image: docker.io/bitnami/kafka:3.5
     depends_on:
@@ -74,8 +74,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.01
-          memory: 256M
+          cpus: 0.75
+          memory: 512M
   eror_stock_harvester:
     image: ghcr.io/tejasvedagiri/erorstockharvester:latest
     # build:
@@ -99,7 +99,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.01
+          cpus: 0.75
           memory: 256M
   eror_stock_api:
     image: ghcr.io/tejasvedagiri/erorstockapiservices:latest
@@ -127,8 +127,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.01
-          memory: 50M
+          cpus: 0.75
+          memory: 512M
   eror_stock_ui:
     image: ghcr.io/tejasvedagiri/erorstockui:latest
     # build:
@@ -145,8 +145,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.01
-          memory: 50M
+          cpus: 0.75
+          memory: 512M
   eror_stock_cron:
     image: ghcr.io/tejasvedagiri/erorstockcron:latest
     # build:
@@ -160,8 +160,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.01
-          memory: 50M
+          cpus: 0.5
+          memory: 256M
   eror_stock_homepage:
     image: ghcr.io/tejasvedagiri/erorhomepage:latest
     # build:
@@ -174,5 +174,5 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.01
-          memory: 50M
+          cpus: 0.9
+          memory: 512M
