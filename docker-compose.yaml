@@ -100,7 +100,7 @@ services:
       resources:
         limits:
           cpus: 0.75
-          memory: 256M
+          memory: 512M
   eror_stock_api:
     image: ghcr.io/tejasvedagiri/erorstockapiservices:latest
     # build:
