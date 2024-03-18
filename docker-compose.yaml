@@ -176,3 +176,16 @@ services:
         limits:
           cpus: 0.9
           memory: 512M
+  eror_phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    depends_on:
+      - ${EROR_STOCK_MYSQL}
+    environment:
+      PMA_HOST: ${EROR_STOCK_MYSQL}
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 5G
+    restart: always
+    ports:
+      - 9011:80
